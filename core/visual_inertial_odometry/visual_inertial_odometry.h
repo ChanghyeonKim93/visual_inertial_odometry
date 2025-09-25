@@ -16,7 +16,7 @@ namespace visual_inertial_odometry {
 struct Parameters {
   struct {
     int max_features_to_extract{1000};
-    int grid_size{30};
+    int grid_size{40};
     int max_num_features_per_cell{3};
   } feature;
   struct {
@@ -51,7 +51,9 @@ class VisualInertialOdometry {
 
   FramePtr previous_frame_{nullptr};
 
+  Image prev_image_;
   std::vector<Vec2f> prev_pixels_;
+
   FeatureOccupancyGrid feature_occupancy_grid_;
   PoseStamped current_pose_;
 

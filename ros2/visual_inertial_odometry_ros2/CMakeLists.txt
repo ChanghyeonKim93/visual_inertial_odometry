@@ -1,16 +1,17 @@
 message("   -- [PROJECT]: " ${CMAKE_PROJECT_NAME}_ros2)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Release)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # add_compile_options(-Wall -Wextra -Wpedantic)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O2 -pthread")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -msse -mavx -mavx2")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+  set(CMAKE_CXX_FLAGS
+      "${CMAKE_CXX_FLAGS} -ffast-math -ftree-vectorize -march=armv8-a+simd")
 endif()
-
-set(CMAKE_BUILD_TYPE Release) # Release, RelWithDebInfo
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O2 -pthread -pg")
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV 4 REQUIRED)
