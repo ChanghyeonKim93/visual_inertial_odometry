@@ -29,9 +29,8 @@ class Landmark {
   void AddFrame(const FramePtr& frame) { related_frames_.push_back(frame); }
 
  private:
-  int id_{-1};                         // feature unique id
-  Vec3f global_point_{Vec2f::Zero()};  // 3D point in the global frame.
-  std::vector<Vec2f> pixels_;          // 2D pixel history of this landmark
+  int id_{-1};                 // feature unique id
+  std::vector<Vec2f> pixels_;  // 2D pixel history of this landmark
   std::vector<FramePtr> related_frames_;
 
   State state_;

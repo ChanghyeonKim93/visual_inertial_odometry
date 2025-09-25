@@ -16,17 +16,20 @@ class Camera {
 
   Vec2f ProjectPoint(const Vec3f& point) const {
     // TODO(@): implement this function
+    (void)point;
     return Vec2f::Zero();
   };
 
   Vec3f GetBearingVector(const Vec2f& pixel) const {
-    // TODO(@): implement this function
+    // TODO(@): implement this function.
+    (void)pixel;
     return Vec3f::Zero();
   };
 
   void UndistortPoints(const std::vector<Vec2f>& distorted_points,
                        std::vector<Vec2f>* undistorted_points) const {
     // TODO(@): implement this function
+    (void)distorted_points;
     undistorted_points->clear();
   };
 

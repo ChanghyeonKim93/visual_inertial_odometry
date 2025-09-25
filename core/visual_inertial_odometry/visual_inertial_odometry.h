@@ -7,9 +7,7 @@
 
 #include "visual_inertial_odometry/feature_extractor/point_extractor.h"
 #include "visual_inertial_odometry/feature_tracker/point_tracker.h"
-#include "visual_inertial_odometry/feature_tracker/point_tracker_klt.h"
 #include "visual_inertial_odometry/frame.h"
-#include "visual_inertial_odometry/image.h"
 #include "visual_inertial_odometry/landmark.h"
 #include "visual_inertial_odometry/types.h"
 
@@ -43,18 +41,14 @@ class VisualInertialOdometry {
  private:
   FramePtr CreateInitialFrame(const Image& img);
   Image ApplyHistogramEqualization(const Image& img);
-  std::vector<PointFeature> ExtractFeatures(const Image& img);
-  std::vector<PointFeature> DistributeFeatures(
-      const std::vector<PointFeature>& features, const int grid_size);
-  FramePtr CreateFrame(const Image& img,
-                       const std::vector<PointFeature>& features);
+  FramePtr CreateFrame(const Image& img, const std::vector<Vec2f>& features);
   void TrackFeatures(const FramePtr& src_frame, const FramePtr& dst_frame,
-                     const std::vector<PointFeature>& src_features,
-                     std::vector<PointFeature>* dst_features);
+                     const std::vector<Vec2f>& src_features,
+                     std::vector<Vec2f>* dst_features);
   Pose3d GetPriorPose() const;  // from IMU preintegration
   Pose3d EstimatePose(const FramePtr& src_frame, const FramePtr& dst_frame,
-                      const std::vector<PointFeature>& src_features,
-                      const std::vector<PointFeature>& dst_features);
+                      const std::vector<Vec2f>& src_features,
+                      const std::vector<Vec2f>& dst_features);
 
   bool NeedNewKeyFrame() const;
   void InsertKeyFrame(const FramePtr& keyframe);
@@ -66,6 +60,9 @@ class VisualInertialOdometry {
   std::deque<FramePtr> keyframes_;  // sliding window of keyframes
 
   FramePtr previous_frame_{nullptr};
+
+  std::vector<Vec2f> prev_pixels_;
+  FeatureOccupancyGrid feature_occupancy_grid_;
   PoseStamped current_pose_;
 
   std::unique_ptr<feature_tracker::PointTracker> point_tracker_{nullptr};

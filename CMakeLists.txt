@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(visual_inertial_odometry)
 
-message("-- [PROJECT]: " ${CMAKE_PROJECT_NAME})
-set(MODULE_NAME ${CMAKE_PROJECT_NAME})
-
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Release)
@@ -17,5 +14,15 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 endif()
 add_compile_options(-Wall -Wextra -Wpedantic)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-add_subdirectory(visual_inertial_odometry)
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(message_filters REQUIRED)
+
+add_subdirectory(core)
+add_subdirectory(ros2)
+
+ament_package()
