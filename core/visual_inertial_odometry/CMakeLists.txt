@@ -16,5 +16,13 @@ add_library(${MODULE_CORE_NAME} STATIC ${SRC})
 target_link_libraries(${MODULE_CORE_NAME} ${EIGEN3_LIBRARIES} ${OpenCV_LIBS})
 install(
   TARGETS ${MODULE_CORE_NAME}
-  DESTINATION lib/${MODULE_NAME}
+  DESTINATION lib/
   CONFIGURATIONS Release)
+
+# Install header files
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DESTINATION include/${MODULE_NAME}
+  FILES_MATCHING
+  PATTERN "*.h"
+  PATTERN "*.hpp")

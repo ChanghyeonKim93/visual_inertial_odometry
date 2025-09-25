@@ -38,20 +38,10 @@ class VisualInertialOdometry {
 
   PoseStamped GetCurrentPose() const;
 
- private:
-  FramePtr CreateInitialFrame(const Image& img);
-  Image ApplyHistogramEqualization(const Image& img);
-  FramePtr CreateFrame(const Image& img, const std::vector<Vec2f>& features);
-  void TrackFeatures(const FramePtr& src_frame, const FramePtr& dst_frame,
-                     const std::vector<Vec2f>& src_features,
-                     std::vector<Vec2f>* dst_features);
-  Pose3d GetPriorPose() const;  // from IMU preintegration
-  Pose3d EstimatePose(const FramePtr& src_frame, const FramePtr& dst_frame,
-                      const std::vector<Vec2f>& src_features,
-                      const std::vector<Vec2f>& dst_features);
+  Image GetDebugImage() const;
 
-  bool NeedNewKeyFrame() const;
-  void InsertKeyFrame(const FramePtr& keyframe);
+ private:
+  Image ApplyHistogramEqualization(const Image& img);
 
   const Parameters parameters_;
 
@@ -64,6 +54,8 @@ class VisualInertialOdometry {
   std::vector<Vec2f> prev_pixels_;
   FeatureOccupancyGrid feature_occupancy_grid_;
   PoseStamped current_pose_;
+
+  Image debug_image_;
 
   std::unique_ptr<feature_tracker::PointTracker> point_tracker_{nullptr};
   std::unique_ptr<feature_extractor::PointExtractor> point_extractor_{nullptr};

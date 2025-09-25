@@ -12,6 +12,7 @@
 #include "nav_msgs/msg/path.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
+#include "sensor_msgs/msg/imu.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
 #include "visual_inertial_odometry/visual_inertial_odometry.h"
@@ -20,12 +21,14 @@ using ImageMsg = sensor_msgs::msg::Image;
 using PointCloud2Msg = sensor_msgs::msg::PointCloud2;
 using OdometryMsg = nav_msgs::msg::Odometry;
 using ImuMsg = sensor_msgs::msg::Imu;
+using PathMsg = nav_msgs::msg::Path;
 
 class VisualInertialOdometryNode : public rclcpp::Node {
  public:
-  VisualInertialOdometryNode(const std::string& node_name) {
-    vio_ = std::make_unique<VisualInertialOdometry>(
-        VisualInertialOdometry::Parameters());
+  VisualInertialOdometryNode(const std::string& node_name) : Node(node_name) {
+    visual_inertial_odometry::Parameters parameters;
+    vio_ = std::make_unique<visual_inertial_odometry::VisualInertialOdometry>(
+        parameters);
   }
 
   ~VisualInertialOdometryNode() {}
@@ -64,7 +67,8 @@ class VisualInertialOdometryNode : public rclcpp::Node {
   std::string topicname_debug_image_;
   ImageMsg msg_debug_image_;
 
-  std::unique_ptr<VisualInertialOdometry> vio_{nullptr};
+  std::unique_ptr<visual_inertial_odometry::VisualInertialOdometry> vio_{
+      nullptr};
 };
 
 int main(int argc, char* argv[]) {

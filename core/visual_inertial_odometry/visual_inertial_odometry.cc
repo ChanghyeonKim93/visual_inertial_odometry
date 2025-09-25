@@ -34,6 +34,8 @@ void VisualInertialOdometry::TrackImage(const Image& input_image) {
 
   point_extractor_->UpdateFeatureOccupancyGrid(prev_pixels_,
                                                &feature_occupancy_grid_);
+  const auto curr_pixels =
+      point_extractor_->ExtractWithBucketing(image, feature_occupancy_grid_);
 
   // Track previous features
 
@@ -48,12 +50,7 @@ PoseStamped VisualInertialOdometry::GetCurrentPose() const {
   return current_pose_;
 }
 
-FramePtr VisualInertialOdometry::CreateInitialFrame(const Image& image) {
-  (void)image;
-  FramePtr new_frame = std::make_shared<Frame>();
-
-  return new_frame;
-}
+Image VisualInertialOdometry::GetDebugImage() const { return debug_image_; }
 
 Image VisualInertialOdometry::ApplyHistogramEqualization(const Image& image) {
   // Use CLAHE

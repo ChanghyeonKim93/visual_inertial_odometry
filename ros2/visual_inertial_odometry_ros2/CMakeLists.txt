@@ -11,20 +11,24 @@ endif()
 
 set(CMAKE_BUILD_TYPE Release) # Release, RelWithDebInfo
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O2 -pthread -pg")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+
+find_package(Eigen3 REQUIRED)
+find_package(OpenCV 4 REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories("/usr/include/opencv4/")
-include_directories(${Eigen3_INCLUDE_DIRS})
+include_directories(${OPENCV_INCLUDE_DIRS})
+include_directories(${EIGEN3_INCLUDE_DIR})
 
-set(SRC ${SRC} visual_odometry/stereo_vo_ros2.cpp)
-
-add_executable(stereo_vo_node visual_odometry/node_stereo_vo.cpp ${SRC})
-target_link_libraries(stereo_vo_node visual_odometry_core ${Eigen3_LIBRARIES}
-                      ${OpenCV_LIBS})
-ament_target_dependencies(stereo_vo_node rclcpp sensor_msgs geometry_msgs
-                          nav_msgs message_filters)
-install(TARGETS stereo_vo_node DESTINATION lib/${PROJECT_NAME}) # install
-                                                                # executable
+add_executable(visual_inertial_odometry_node visual_inertial_odometry_node.cc)
+target_include_directories(visual_inertial_odometry_node
+                           PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(
+  visual_inertial_odometry_node visual_inertial_odometry_core
+  ${EIGEN3_LIBRARIES} ${OpenCV_LIBS})
+ament_target_dependencies(visual_inertial_odometry_node rclcpp sensor_msgs
+                          geometry_msgs nav_msgs message_filters)
+install(TARGETS visual_inertial_odometry_node DESTINATION lib/${PROJECT_NAME}
+)# install
+# executable
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}) # install launch
                                                             # files

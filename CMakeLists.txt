@@ -22,7 +22,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(message_filters REQUIRED)
 
-add_subdirectory(core)
+# add_subdirectory(core)
 add_subdirectory(ros2)
 
 ament_package()
