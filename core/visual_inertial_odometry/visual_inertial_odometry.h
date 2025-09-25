@@ -34,7 +34,7 @@ class VisualInertialOdometry {
 
   void IntegrateImuPreintegrator(const ImuData& imu_data);
 
-  void TrackImage(const Image& img);
+  void TrackImage(const double timestamp, const Image& img);
 
   PoseStamped GetCurrentPose() const;
 

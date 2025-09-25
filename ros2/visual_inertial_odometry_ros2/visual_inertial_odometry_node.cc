@@ -29,12 +29,19 @@ class VisualInertialOdometryNode : public rclcpp::Node {
     visual_inertial_odometry::Parameters parameters;
     vio_ = std::make_unique<visual_inertial_odometry::VisualInertialOdometry>(
         parameters);
+
+    sub_image_ = this->create_subscription<ImageMsg>(
+        "/camera/camera/infra1/image_rect_raw", rclcpp::SensorDataQoS(),
+        std::bind(&VisualInertialOdometryNode::CallbackImage, this,
+                  std::placeholders::_1));
+
+    pub_debug_image_ = this->create_publisher<ImageMsg>("debug_image", 10);
   }
 
   ~VisualInertialOdometryNode() {}
 
  private:
-  void CallbackImage(const ImageMsg::ConstSharedPtr& msg) {
+  void CallbackImage(ImageMsg::SharedPtr msg) {
     if (msg == nullptr) return;
     if (msg->data.empty()) return;
     if (msg->encoding != "mono8" && msg->encoding != "8UC1") {
@@ -54,7 +61,22 @@ class VisualInertialOdometryNode : public rclcpp::Node {
     std::memcpy(image.data, msg->data.data(), msg->data.size());
 
     // Process the image using VIO
-    vio_->TrackImage(image);
+    vio_->TrackImage(0.0, image);
+
+    // Publish debug image
+    const auto debug_image = vio_->GetDebugImage();
+    if (!debug_image.empty()) {
+      msg_debug_image_.header = msg->header;
+      msg_debug_image_.height = debug_image.rows;
+      msg_debug_image_.width = debug_image.cols;
+      msg_debug_image_.encoding = "mono8";
+      msg_debug_image_.is_bigendian = false;
+      msg_debug_image_.step = debug_image.cols;
+      msg_debug_image_.data.resize(debug_image.rows * debug_image.cols);
+      std::memcpy(msg_debug_image_.data.data(), debug_image.data,
+                  msg_debug_image_.data.size());
+      pub_debug_image_->publish(msg_debug_image_);
+    }
   }
 
   rclcpp::Subscription<ImageMsg>::SharedPtr sub_image_;

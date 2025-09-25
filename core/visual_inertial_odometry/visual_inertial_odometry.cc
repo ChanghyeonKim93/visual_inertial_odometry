@@ -1,5 +1,6 @@
 #include "visual_inertial_odometry/visual_inertial_odometry.h"
 
+#include <iostream>
 namespace visual_inertial_odometry {
 
 VisualInertialOdometry::VisualInertialOdometry(const Parameters& parameters)
@@ -18,7 +19,8 @@ void VisualInertialOdometry::IntegrateImuPreintegrator(
   (void)current_pose_;
 }
 
-void VisualInertialOdometry::TrackImage(const Image& input_image) {
+void VisualInertialOdometry::TrackImage(const double timestamp,
+                                        const Image& input_image) {
   // TODO(@): implement this function
   const Image image = ApplyHistogramEqualization(input_image);
 
@@ -36,6 +38,15 @@ void VisualInertialOdometry::TrackImage(const Image& input_image) {
                                                &feature_occupancy_grid_);
   const auto curr_pixels =
       point_extractor_->ExtractWithBucketing(image, feature_occupancy_grid_);
+
+  // Draw extracted features for debugging
+  debug_image_ = image.clone();
+  debug_image_.convertTo(debug_image_, CV_8UC3);
+  for (const auto& p : prev_pixels_) {
+    cv::circle(debug_image_, cv::Point2f(p.x(), p.y()), 3,
+               cv::Scalar(255, 0, 255), -1);
+  }
+  prev_pixels_ = curr_pixels;
 
   // Track previous features
 
